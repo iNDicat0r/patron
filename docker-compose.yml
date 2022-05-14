@@ -98,6 +98,14 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+#  mosquitto:
+#    image: eclipse-mosquitto
+#    # ports declaration not needed when running under docker but useful for debugging outside of it!
+#    ports:
+#      - target: 1883
+#        published: 1883
+#        protocol: tcp
+#        mode: host
 volumes:
   rabbitmq_data:
     driver: local

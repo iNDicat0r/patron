@@ -71,7 +71,7 @@ func DefaultConfig(brokerURLs []*url.URL, clientID string) (autopaho.ClientConfi
 	}, nil
 }
 
-// Publisher definition
+// Publisher definition.
 type Publisher struct {
 	cm *autopaho.ConnectionManager
 }

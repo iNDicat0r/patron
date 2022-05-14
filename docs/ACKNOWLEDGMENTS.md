@@ -19,3 +19,4 @@ The framework makes primarily use of the following OSS projects:
 * [github.com/eclipse/paho.golang](https://github.com/eclipse/paho.golang)
 * [google.golang.org/grpc](https://google.golang.org/grpc)
 * [google.golang.org/protobuf](https://google.golang.org/protobuf)
+* [github.com/eclipse/paho.golang](https://github.com/eclipse/paho.golang)

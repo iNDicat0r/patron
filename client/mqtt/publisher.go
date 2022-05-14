@@ -1,3 +1,4 @@
+// Package mqtt provides an instrumented publisher for MQTT v5.
 package mqtt
 
 import (
@@ -35,6 +36,7 @@ func init() {
 	prometheus.MustRegister(publishDurationMetrics)
 }
 
+// DefaultConfig provides a config with sane default and logging enabled on the callbacks.
 func DefaultConfig(brokerURLs []*url.URL, clientID string) (autopaho.ClientConfig, error) {
 	if len(brokerURLs) == 0 {
 		return autopaho.ClientConfig{}, errors.New("no broker URLs provided")
@@ -69,10 +71,12 @@ func DefaultConfig(brokerURLs []*url.URL, clientID string) (autopaho.ClientConfi
 	}, nil
 }
 
+// Publisher definition
 type Publisher struct {
 	cm *autopaho.ConnectionManager
 }
 
+// New creates a publisher.
 func New(ctx context.Context, cfg autopaho.ClientConfig) (*Publisher, error) {
 	cm, err := autopaho.NewConnection(ctx, cfg)
 	if err != nil {
@@ -82,6 +86,7 @@ func New(ctx context.Context, cfg autopaho.ClientConfig) (*Publisher, error) {
 	return &Publisher{cm: cm}, nil
 }
 
+// Publish provides a instrumented publishing of a message.
 func (p *Publisher) Publish(ctx context.Context, pub *paho.Publish) (*paho.PublishResponse, error) {
 	sp, _ := trace.ChildSpan(ctx, trace.ComponentOpName(componentType, pub.Topic), componentType,
 		ext.SpanKindProducer, opentracing.Tag{Key: "topic", Value: pub.Topic})
@@ -109,6 +114,7 @@ func (p *Publisher) Publish(ctx context.Context, pub *paho.Publish) (*paho.Publi
 	return rsp, nil
 }
 
+// Disconnect from the broker.
 func (p *Publisher) Disconnect(ctx context.Context) error {
 	return p.cm.Disconnect(ctx)
 }
@@ -128,6 +134,7 @@ func injectObservabilityHeaders(ctx context.Context, pub *paho.Publish, sp opent
 
 	c := mqttHeadersCarrier(pub.Properties.User)
 	err := sp.Tracer().Inject(sp.Context(), opentracing.TextMap, &c)
+	pub.Properties.User = paho.UserProperties(c)
 	return err
 }
 
@@ -136,6 +143,7 @@ func ensurePublishingProperties(pub *paho.Publish) {
 		pub.Properties = &paho.PublishProperties{
 			User: paho.UserProperties{},
 		}
+		return
 	}
 	if pub.Properties.User == nil {
 		pub.Properties.User = paho.UserProperties{}

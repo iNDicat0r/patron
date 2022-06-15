@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/beatlabs/patron/log"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog"
 )
 
@@ -29,12 +30,22 @@ var (
 		packagePath: "vendor/github.com/beatlabs/",
 	}
 	defaultSourceHookWithFormat = defaultSourceHook
+	logCounter                  = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "observability",
+			Subsystem: "log",
+			Name:      "counter",
+			Help:      "Counts logger calls per level",
+		},
+		[]string{"level"},
+	)
 )
 
 func init() {
 	zerolog.LevelFieldName = "lvl"
 	zerolog.MessageFieldName = "msg"
 	zerolog.TimeFieldFormat = time.RFC3339Nano
+	prometheus.MustRegister(logCounter)
 }
 
 // Logger abstraction based on zerolog.
@@ -69,61 +80,73 @@ func (l *Logger) Sub(ff map[string]interface{}) log.Logger {
 
 // Panic logging.
 func (l *Logger) Panic(args ...interface{}) {
+	logCounter.WithLabelValues(string(log.PanicLevel)).Inc()
 	l.logger.Panic().Msg(fmt.Sprint(args...))
 }
 
 // Panicf logging.
 func (l *Logger) Panicf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(log.PanicLevel)).Inc()
 	l.loggerf.Panic().Msgf(msg, args...)
 }
 
 // Fatal logging.
 func (l *Logger) Fatal(args ...interface{}) {
+	logCounter.WithLabelValues(string(log.FatalLevel)).Inc()
 	l.logger.Fatal().Msg(fmt.Sprint(args...))
 }
 
 // Fatalf logging.
 func (l *Logger) Fatalf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(log.FatalLevel)).Inc()
 	l.loggerf.Fatal().Msgf(msg, args...)
 }
 
 // Error logging.
 func (l *Logger) Error(args ...interface{}) {
+	logCounter.WithLabelValues(string(log.ErrorLevel)).Inc()
 	l.logger.Error().Msg(fmt.Sprint(args...))
 }
 
 // Errorf logging.
 func (l *Logger) Errorf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(log.ErrorLevel)).Inc()
 	l.loggerf.Error().Msgf(msg, args...)
 }
 
 // Warn logging.
 func (l *Logger) Warn(args ...interface{}) {
+	logCounter.WithLabelValues(string(log.WarnLevel)).Inc()
 	l.logger.Warn().Msg(fmt.Sprint(args...))
 }
 
 // Warnf logging.
 func (l *Logger) Warnf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(log.WarnLevel)).Inc()
 	l.loggerf.Warn().Msgf(msg, args...)
 }
 
 // Info logging.
 func (l *Logger) Info(args ...interface{}) {
+	logCounter.WithLabelValues(string(log.InfoLevel)).Inc()
 	l.logger.Info().Msg(fmt.Sprint(args...))
 }
 
 // Infof logging.
 func (l *Logger) Infof(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(log.InfoLevel)).Inc()
 	l.loggerf.Info().Msgf(msg, args...)
 }
 
 // Debug logging.
 func (l *Logger) Debug(args ...interface{}) {
+	logCounter.WithLabelValues(string(log.DebugLevel)).Inc()
 	l.logger.Debug().Msg(fmt.Sprint(args...))
 }
 
 // Debugf logging.
 func (l *Logger) Debugf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(log.DebugLevel)).Inc()
 	l.loggerf.Debug().Msgf(msg, args...)
 }
 

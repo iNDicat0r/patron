@@ -10,16 +10,28 @@ import (
 	"strings"
 
 	patronLog "github.com/beatlabs/patron/log"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
-var levelMap = map[patronLog.Level]string{
-	patronLog.DebugLevel: "DBG",
-	patronLog.InfoLevel:  "INF",
-	patronLog.WarnLevel:  "WRN",
-	patronLog.ErrorLevel: "ERR",
-	patronLog.FatalLevel: "FTL",
-	patronLog.PanicLevel: "PNC",
-}
+var (
+	levelMap = map[patronLog.Level]string{
+		patronLog.DebugLevel: "DBG",
+		patronLog.InfoLevel:  "INF",
+		patronLog.WarnLevel:  "WRN",
+		patronLog.ErrorLevel: "ERR",
+		patronLog.FatalLevel: "FTL",
+		patronLog.PanicLevel: "PNC",
+	}
+	logCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "observability",
+			Subsystem: "log",
+			Name:      "counter",
+			Help:      "Counts logger calls per level",
+		},
+		[]string{"level"},
+	)
+)
 
 // Logger implementation of the std log.
 type Logger struct {
@@ -33,6 +45,10 @@ type Logger struct {
 	error      *log.Logger
 	panic      *log.Logger
 	fatal      *log.Logger
+}
+
+func init() {
+	prometheus.MustRegister(logCounter)
 }
 
 // New constructor.
@@ -99,6 +115,7 @@ func (l *Logger) Sub(fields map[string]interface{}) patronLog.Logger {
 
 // Fatal logging.
 func (l *Logger) Fatal(args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.FatalLevel)).Inc()
 	if !l.shouldLog(patronLog.FatalLevel) {
 		return
 	}
@@ -109,6 +126,7 @@ func (l *Logger) Fatal(args ...interface{}) {
 
 // Fatalf logging.
 func (l *Logger) Fatalf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.FatalLevel)).Inc()
 	if !l.shouldLog(patronLog.FatalLevel) {
 		return
 	}
@@ -119,6 +137,7 @@ func (l *Logger) Fatalf(msg string, args ...interface{}) {
 
 // Panic logging.
 func (l *Logger) Panic(args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.PanicLevel)).Inc()
 	if !l.shouldLog(patronLog.PanicLevel) {
 		return
 	}
@@ -128,6 +147,7 @@ func (l *Logger) Panic(args ...interface{}) {
 
 // Panicf logging.
 func (l *Logger) Panicf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.PanicLevel)).Inc()
 	if !l.shouldLog(patronLog.PanicLevel) {
 		return
 	}
@@ -137,6 +157,7 @@ func (l *Logger) Panicf(msg string, args ...interface{}) {
 
 // Error logging.
 func (l *Logger) Error(args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.ErrorLevel)).Inc()
 	if !l.shouldLog(patronLog.ErrorLevel) {
 		return
 	}
@@ -146,6 +167,7 @@ func (l *Logger) Error(args ...interface{}) {
 
 // Errorf logging.
 func (l *Logger) Errorf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.ErrorLevel)).Inc()
 	if !l.shouldLog(patronLog.ErrorLevel) {
 		return
 	}
@@ -155,6 +177,7 @@ func (l *Logger) Errorf(msg string, args ...interface{}) {
 
 // Warn logging.
 func (l *Logger) Warn(args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.WarnLevel)).Inc()
 	if !l.shouldLog(patronLog.WarnLevel) {
 		return
 	}
@@ -164,6 +187,7 @@ func (l *Logger) Warn(args ...interface{}) {
 
 // Warnf logging.
 func (l *Logger) Warnf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.WarnLevel)).Inc()
 	if !l.shouldLog(patronLog.WarnLevel) {
 		return
 	}
@@ -173,6 +197,7 @@ func (l *Logger) Warnf(msg string, args ...interface{}) {
 
 // Info logging.
 func (l *Logger) Info(args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.InfoLevel)).Inc()
 	if !l.shouldLog(patronLog.InfoLevel) {
 		return
 	}
@@ -182,6 +207,7 @@ func (l *Logger) Info(args ...interface{}) {
 
 // Infof logging.
 func (l *Logger) Infof(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.InfoLevel)).Inc()
 	if !l.shouldLog(patronLog.InfoLevel) {
 		return
 	}
@@ -191,6 +217,7 @@ func (l *Logger) Infof(msg string, args ...interface{}) {
 
 // Debug logging.
 func (l *Logger) Debug(args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.DebugLevel)).Inc()
 	if !l.shouldLog(patronLog.DebugLevel) {
 		return
 	}
@@ -200,6 +227,7 @@ func (l *Logger) Debug(args ...interface{}) {
 
 // Debugf logging.
 func (l *Logger) Debugf(msg string, args ...interface{}) {
+	logCounter.WithLabelValues(string(patronLog.DebugLevel)).Inc()
 	if !l.shouldLog(patronLog.DebugLevel) {
 		return
 	}

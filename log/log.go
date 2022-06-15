@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"sync"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // The Level type definition.
@@ -29,14 +31,29 @@ const (
 	NoLevel Level = ""
 )
 
-var levelOrder = map[Level]int{
-	DebugLevel: 0,
-	InfoLevel:  1,
-	WarnLevel:  2,
-	ErrorLevel: 3,
-	FatalLevel: 4,
-	PanicLevel: 5,
-	NoLevel:    6,
+var (
+	levelOrder = map[Level]int{
+		DebugLevel: 0,
+		InfoLevel:  1,
+		WarnLevel:  2,
+		ErrorLevel: 3,
+		FatalLevel: 4,
+		PanicLevel: 5,
+		NoLevel:    6,
+	}
+	LogCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "observability",
+			Subsystem: "log",
+			Name:      "counter",
+			Help:      "Counts logger calls per level",
+		},
+		[]string{"level"},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(LogCounter)
 }
 
 // LevelOrder returns the numerical order of the level.

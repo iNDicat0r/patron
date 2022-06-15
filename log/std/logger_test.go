@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/beatlabs/patron/log"
+	patronLog "github.com/beatlabs/patron/log"
 	"github.com/prometheus/client_golang/prometheus/testutil"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +29,7 @@ func TestNewLogger(t *testing.T) {
 
 func TestLogMetrics(t *testing.T) {
 	t.Parallel()
-	logCounter.Reset()
+	patronLog.LogCounter.Reset()
 	var b bytes.Buffer
 	l := New(&b, log.InfoLevel, nil)
 	tests := map[string]struct {
@@ -46,19 +47,19 @@ func TestLogMetrics(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, 0.0, testutil.ToFloat64(logCounter.WithLabelValues(string(tt.lvl))))
+			assert.Equal(t, 0.0, testutil.ToFloat64(patronLog.LogCounter.WithLabelValues(string(tt.lvl))))
 			if tt.lvl == log.PanicLevel {
 				assert.Panics(t, func() { tt.logfunc(name) })
 			} else {
 				tt.logfunc(name)
 			}
-			assert.Equal(t, 1.0, testutil.ToFloat64(logCounter.WithLabelValues(string(tt.lvl))))
+			assert.Equal(t, 1.0, testutil.ToFloat64(patronLog.LogCounter.WithLabelValues(string(tt.lvl))))
 			if tt.lvl == log.PanicLevel {
 				assert.Panics(t, func() { tt.logfuncf(name) })
 			} else {
 				tt.logfuncf(name)
 			}
-			assert.Equal(t, 2.0, testutil.ToFloat64(logCounter.WithLabelValues(string(tt.lvl))))
+			assert.Equal(t, 2.0, testutil.ToFloat64(patronLog.LogCounter.WithLabelValues(string(tt.lvl))))
 		})
 	}
 }

@@ -12,16 +12,14 @@ import (
 	patronLog "github.com/beatlabs/patron/log"
 )
 
-var (
-	levelMap = map[patronLog.Level]string{
-		patronLog.DebugLevel: "DBG",
-		patronLog.InfoLevel:  "INF",
-		patronLog.WarnLevel:  "WRN",
-		patronLog.ErrorLevel: "ERR",
-		patronLog.FatalLevel: "FTL",
-		patronLog.PanicLevel: "PNC",
-	}
-)
+var levelMap = map[patronLog.Level]string{
+	patronLog.DebugLevel: "DBG",
+	patronLog.InfoLevel:  "INF",
+	patronLog.WarnLevel:  "WRN",
+	patronLog.ErrorLevel: "ERR",
+	patronLog.FatalLevel: "FTL",
+	patronLog.PanicLevel: "PNC",
+}
 
 // Logger implementation of the std log.
 type Logger struct {

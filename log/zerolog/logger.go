@@ -69,73 +69,73 @@ func (l *Logger) Sub(ff map[string]interface{}) log.Logger {
 
 // Panic logging.
 func (l *Logger) Panic(args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.PanicLevel)).Inc()
+	log.IncreasePanicCounter()
 	l.logger.Panic().Msg(fmt.Sprint(args...))
 }
 
 // Panicf logging.
 func (l *Logger) Panicf(msg string, args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.PanicLevel)).Inc()
+	log.IncreasePanicCounter()
 	l.loggerf.Panic().Msgf(msg, args...)
 }
 
 // Fatal logging.
 func (l *Logger) Fatal(args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.FatalLevel)).Inc()
+	log.IncreaseFatalCounter()
 	l.logger.Fatal().Msg(fmt.Sprint(args...))
 }
 
 // Fatalf logging.
 func (l *Logger) Fatalf(msg string, args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.FatalLevel)).Inc()
+	log.IncreaseFatalCounter()
 	l.loggerf.Fatal().Msgf(msg, args...)
 }
 
 // Error logging.
 func (l *Logger) Error(args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.ErrorLevel)).Inc()
+	log.IncreaseErrorCounter()
 	l.logger.Error().Msg(fmt.Sprint(args...))
 }
 
 // Errorf logging.
 func (l *Logger) Errorf(msg string, args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.ErrorLevel)).Inc()
+	log.IncreaseErrorCounter()
 	l.loggerf.Error().Msgf(msg, args...)
 }
 
 // Warn logging.
 func (l *Logger) Warn(args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.WarnLevel)).Inc()
+	log.IncreaseWarnCounter()
 	l.logger.Warn().Msg(fmt.Sprint(args...))
 }
 
 // Warnf logging.
 func (l *Logger) Warnf(msg string, args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.WarnLevel)).Inc()
+	log.IncreaseWarnCounter()
 	l.loggerf.Warn().Msgf(msg, args...)
 }
 
 // Info logging.
 func (l *Logger) Info(args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.InfoLevel)).Inc()
+	log.IncreaseInfoCounter()
 	l.logger.Info().Msg(fmt.Sprint(args...))
 }
 
 // Infof logging.
 func (l *Logger) Infof(msg string, args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.InfoLevel)).Inc()
+	log.IncreaseInfoCounter()
 	l.loggerf.Info().Msgf(msg, args...)
 }
 
 // Debug logging.
 func (l *Logger) Debug(args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.DebugLevel)).Inc()
+	log.IncreaseDebugCounter()
 	l.logger.Debug().Msg(fmt.Sprint(args...))
 }
 
 // Debugf logging.
 func (l *Logger) Debugf(msg string, args ...interface{}) {
-	log.LogCounter.WithLabelValues(string(log.DebugLevel)).Inc()
+	log.IncreaseDebugCounter()
 	l.loggerf.Debug().Msgf(msg, args...)
 }
 

@@ -37,7 +37,7 @@ func TestLevelOrder(t *testing.T) {
 
 func TestLogMetrics(t *testing.T) {
 	t.Parallel()
-	LogCounter.Reset()
+	ResetLogCounter()
 	l = &fmtLogger{}
 	tests := map[string]struct {
 		lvl      Level
@@ -54,19 +54,19 @@ func TestLogMetrics(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, 0.0, testutil.ToFloat64(LogCounter.WithLabelValues(string(tt.lvl))))
+			assert.Equal(t, 0.0, testutil.ToFloat64(LevelCount(string(tt.lvl))))
 			if tt.lvl == PanicLevel {
 				assert.Panics(t, func() { tt.logfunc(name) })
 			} else {
 				tt.logfunc(name)
 			}
-			assert.Equal(t, 1.0, testutil.ToFloat64(LogCounter.WithLabelValues(string(tt.lvl))))
+			assert.Equal(t, 1.0, testutil.ToFloat64(LevelCount(string(tt.lvl))))
 			if tt.lvl == PanicLevel {
 				assert.Panics(t, func() { tt.logfuncf(name) })
 			} else {
 				tt.logfuncf(name)
 			}
-			assert.Equal(t, 2.0, testutil.ToFloat64(LogCounter.WithLabelValues(string(tt.lvl))))
+			assert.Equal(t, 2.0, testutil.ToFloat64(LevelCount(string(tt.lvl))))
 		})
 	}
 }

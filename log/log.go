@@ -193,65 +193,77 @@ func (fl *fmtLogger) Sub(map[string]interface{}) Logger {
 
 // Panic logging.
 func (fl *fmtLogger) Panic(args ...interface{}) {
+	LogCounter.WithLabelValues(string(PanicLevel)).Inc()
 	fmt.Print(args...)
 	panic(args)
 }
 
 // Panicf logging.
 func (fl *fmtLogger) Panicf(msg string, args ...interface{}) {
+	LogCounter.WithLabelValues(string(PanicLevel)).Inc()
 	fmt.Printf(msg, args...)
 	panic(args)
 }
 
 // Fatal logging.
 func (fl *fmtLogger) Fatal(args ...interface{}) {
+	LogCounter.WithLabelValues(string(FatalLevel)).Inc()
 	fmt.Print(args...)
 	os.Exit(1)
 }
 
 // Fatalf logging.
 func (fl *fmtLogger) Fatalf(msg string, args ...interface{}) {
+	LogCounter.WithLabelValues(string(FatalLevel)).Inc()
 	fmt.Printf(msg, args...)
 	os.Exit(1)
 }
 
 // Error logging.
 func (fl *fmtLogger) Error(args ...interface{}) {
+	LogCounter.WithLabelValues(string(ErrorLevel)).Inc()
 	fmt.Print(args...)
 }
 
 // Errorf logging.
 func (fl *fmtLogger) Errorf(msg string, args ...interface{}) {
+	LogCounter.WithLabelValues(string(ErrorLevel)).Inc()
 	fmt.Printf(msg, args...)
 }
 
 // Warn logging.
 func (fl *fmtLogger) Warn(args ...interface{}) {
+	LogCounter.WithLabelValues(string(WarnLevel)).Inc()
 	fmt.Print(args...)
 }
 
 // Warnf logging.
 func (fl *fmtLogger) Warnf(msg string, args ...interface{}) {
+	LogCounter.WithLabelValues(string(WarnLevel)).Inc()
 	fmt.Printf(msg, args...)
 }
 
 // Info logging.
 func (fl *fmtLogger) Info(args ...interface{}) {
+	LogCounter.WithLabelValues(string(InfoLevel)).Inc()
 	fmt.Print(args...)
 }
 
 // Infof logging.
 func (fl *fmtLogger) Infof(msg string, args ...interface{}) {
+	LogCounter.WithLabelValues(string(InfoLevel)).Inc()
 	fmt.Printf(msg, args...)
 }
 
 // Debug logging.
 func (fl *fmtLogger) Debug(args ...interface{}) {
+	LogCounter.WithLabelValues(string(DebugLevel)).Inc()
 	fmt.Print(args...)
 }
 
 // Debugf logging.
 func (fl *fmtLogger) Debugf(msg string, args ...interface{}) {
+	LogCounter.WithLabelValues(string(DebugLevel)).Inc()
 	fmt.Printf(msg, args...)
 }
 

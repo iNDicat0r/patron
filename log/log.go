@@ -52,6 +52,31 @@ var (
 	)
 )
 
+// Logger interface definition of a logger.
+type Logger interface {
+	Sub(map[string]interface{}) Logger
+	Fatal(...interface{})
+	Fatalf(string, ...interface{})
+	Panic(...interface{})
+	Panicf(string, ...interface{})
+	Error(...interface{})
+	Errorf(string, ...interface{})
+	Warn(...interface{})
+	Warnf(string, ...interface{})
+	Info(...interface{})
+	Infof(string, ...interface{})
+	Debug(...interface{})
+	Debugf(string, ...interface{})
+	Level() Level
+}
+
+type ctxKey struct{}
+
+var (
+	logger Logger = &fmtLogger{}
+	once   sync.Once
+)
+
 func init() {
 	prometheus.MustRegister(logCounter)
 }
@@ -100,31 +125,6 @@ func IncreaseDebugCounter() {
 func LevelOrder(lvl Level) int {
 	return levelOrder[lvl]
 }
-
-// Logger interface definition of a logger.
-type Logger interface {
-	Sub(map[string]interface{}) Logger
-	Fatal(...interface{})
-	Fatalf(string, ...interface{})
-	Panic(...interface{})
-	Panicf(string, ...interface{})
-	Error(...interface{})
-	Errorf(string, ...interface{})
-	Warn(...interface{})
-	Warnf(string, ...interface{})
-	Info(...interface{})
-	Infof(string, ...interface{})
-	Debug(...interface{})
-	Debugf(string, ...interface{})
-	Level() Level
-}
-
-type ctxKey struct{}
-
-var (
-	logger Logger = &fmtLogger{}
-	once   sync.Once
-)
 
 // Setup logging by providing a logger factory.
 func Setup(l Logger) error {
